@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esempi di immagini con diversi tipi di alt-text</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        img {
+            max-width: 10rem;
+            height: auto;
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Esempi di immagini con diversi tipi di alt-text</h1>
+    <ol>
+        <li>
+            <div class="example">
+                <h2>Immagine senza alt-text</h2>
+                <img src="./img/albero.jpg" />
+            </div>
+        </li>
+        <li>
+            <div class="example">
+                <h2>Immagine con alt-text sbagliato (stringa alfanumerica incomprensibile)</h2>
+                <img src="./img/albero.jpg" alt="IMG_20240325_134529" />
+            </div>
+        </li>
+        <li>
+            <div class="example">
+                <h2>Immagine con alt-text corretto</h2>
+                <img src="./img/albero.jpg" alt="Albero autunnale arancio con foglie a terra" />
+            </div>
+        </li>
+    </ol>
+</body>
+</html>

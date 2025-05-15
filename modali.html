@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esempi di modali con diversa gestione del focus</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .example {
+            margin-bottom: 50px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .example-title {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .description {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        /* Stili per i bottoni */
+        .modal-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .modal-button:hover, .modal-button:focus {
+            background-color: #45a049;
+            outline: 3px solid #2196F3;
+        }
+
+        /* Stili per i modal */
+        .modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-title {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .close-button:hover, .close-button:focus {
+            color: #333;
+            outline: 2px solid #2196F3;
+        }
+
+        /* Elementi di test per dimostrare il problema del focus */
+        .test-elements {
+            margin-top: 30px;
+        }
+
+        .test-elements input, .test-elements button {
+            margin: 5px;
+            padding: 8px;
+        }
+
+        /* Stili per il codice di esempio */
+        .code-example {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        /* Evidenziazione del codice */
+        .highlight {
+            background-color: #ffeb3b;
+            padding: 2px 4px;
+        }
+
+        /* Indicatore del focus attuale */
+        .focus-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            z-index: 2000;
+            display: none;
+        }
+
+        .focus-indicator.active {
+            display: block;
+        }
+
+        /* Contatore tab */
+        .tab-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Esempi di modali con diversa gestione del focus</h1>
+
+        <div class="example">
+            <h2 class="example-title">1. Modal non correttamente isolato (focus vaga su elementi invisibili)</h2>
+            
+            <button id="brokenModalBtn" class="modal-button">Vedi più info</button>
+
+            <div id="brokenModal" class="modal">
+                <div class="modal-content">
+                    <button class="close-button" onclick="closeModal('brokenModal')">&times;</button>
+                    <h3 class="modal-title">Informazioni aggiuntive</h3>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sagittis pulvinar augue, sit amet blandit felis consequat ut. Sed sagittis neque bibendum tempor vulputate. Mauris lobortis tincidunt leo et congue. Mauris consequat mauris sed urna eleifend, ut porta massa vestibulum. Sed pharetra tincidunt est id commodo. Proin vel sapien facilisis, pretium neque eu, ornare turpis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc iaculis eleifend neque, in consectetur mi sodales vel. Morbi vitae consequat nisi, sit amet rhoncus metus. Fusce sodales eu nisl ac finibus.   
+                    </p>
+                    <button onclick="closeModal('brokenModal')">Chiudi</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="example">
+            <h2 class="example-title">2. Modal correttamente isolato (focus intrappolato)</h2>
+
+            <button id="goodModalBtn" class="modal-button">Vedi più info</button>
+
+            <div id="goodModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="goodModalTitle">
+                <div class="modal-content">
+                    <button class="close-button" onclick="closeModal('goodModal', true)" aria-label="Chiudi">&times;</button>
+                    <h3 class="modal-title" id="goodModalTitle">Informazioni aggiuntive</h3>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sagittis pulvinar augue, sit amet blandit felis consequat ut. Sed sagittis neque bibendum tempor vulputate. Mauris lobortis tincidunt leo et congue. Mauris consequat mauris sed urna eleifend, ut porta massa vestibulum. Sed pharetra tincidunt est id commodo. Proin vel sapien facilisis, pretium neque eu, ornare turpis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc iaculis eleifend neque, in consectetur mi sodales vel. Morbi vitae consequat nisi, sit amet rhoncus metus. Fusce sodales eu nisl ac finibus.   
+                    </p>
+                    <button onclick="closeModal('goodModal', true)">Chiudi</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="example">
+            <h2 class="example-title">3. Modal con attributo aria-haspopup</h2>
+
+            <button id="ariaModalBtn" class="modal-button" aria-haspopup="dialog" aria-expanded="false">Vedi più info</button>
+
+            <div id="ariaModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="ariaModalTitle" aria-describedby="ariaModalDesc">
+                <div class="modal-content">
+                    <button class="close-button" onclick="closeModal('ariaModal', true)" aria-label="Chiudi">&times;</button>
+                    <h3 class="modal-title" id="ariaModalTitle">Informazioni aggiuntive</h3>
+                    <p id="ariaModalDesc">
+                        Questo è un modal con una corretta gestione del focus. Prova a premere Tab ripetutamente e noterai che il focus rimane intrappolato all'interno del modal.
+                    </p>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sagittis pulvinar augue, sit amet blandit felis consequat ut. Sed sagittis neque bibendum tempor vulputate. Mauris lobortis tincidunt leo et congue. Mauris consequat mauris sed urna eleifend, ut porta massa vestibulum. Sed pharetra tincidunt est id commodo. Proin vel sapien facilisis, pretium neque eu, ornare turpis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc iaculis eleifend neque, in consectetur mi sodales vel. Morbi vitae consequat nisi, sit amet rhoncus metus. Fusce sodales eu nisl ac finibus.   
+                    </p>
+                    <button onclick="closeModal('ariaModal', true)">Chiudi</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- Elementi di test per dimostrare il problema del focus -->
+        <div class="test-elements">
+            <h3>Elementi della pagina sottostante</h3>
+            <p>Questi elementi servono a dimostrare il problema del focus nei modal non isolati correttamente:</p>
+            <input type="text" placeholder="Campo di testo">
+            <button>Pulsante pagina</button>
+            <a href="#" onclick="return false;">Link pagina 1</a>
+            <a href="#" onclick="return false;">Link pagina 2</a>
+            <input type="checkbox" id="checkbox1"><label for="checkbox1">Opzione 1</label>
+            <input type="checkbox" id="checkbox2"><label for="checkbox2">Opzione 2</label>
+        </div>
+    </div>
+    
+    
+    <script>
+        // Elementi DOM
+        const brokenModalBtn = document.getElementById('brokenModalBtn');
+        const goodModalBtn = document.getElementById('goodModalBtn');
+        const ariaModalBtn = document.getElementById('ariaModalBtn');
+        
+        // Apertura dei modal
+        brokenModalBtn.addEventListener('click', function() {
+            openBrokenModal();
+        });
+        
+        goodModalBtn.addEventListener('click', function() {
+            openGoodModal();
+        });
+        
+        ariaModalBtn.addEventListener('click', function() {
+            openAriaModal();
+        });
+        
+        // Funzioni per l'apertura dei modal
+        function openBrokenModal() {
+            const modal = document.getElementById('brokenModal');
+            modal.style.display = 'block';
+            // Nessuna gestione del focus, dimostra il problema
+        }
+        
+        function openGoodModal() {
+            const modal = document.getElementById('goodModal');
+            modal.style.display = 'block';
+            
+            // Salva l'elemento che aveva il focus
+            modal.previouslyFocused = document.activeElement;
+            
+            // Sposta il focus al primo elemento interattivo del modal
+            const firstFocusable = modal.querySelector('button, [href], input');
+            if (firstFocusable) {
+                setTimeout(() => {
+                    firstFocusable.focus();
+                }, 50);
+            }
+            
+            // Configura il focus trap
+            setupFocusTrap(modal);
+        }
+        
+        function openAriaModal() {
+            const modal = document.getElementById('ariaModal');
+            const button = document.getElementById('ariaModalBtn');
+            
+            // Aggiorna lo stato dell'attributo aria-expanded
+            button.setAttribute('aria-expanded', 'true');
+            
+            modal.style.display = 'block';
+            modal.previouslyFocused = document.activeElement;
+            
+            // Sposta il focus al primo elemento interattivo
+            const firstFocusable = modal.querySelector('button, [href], input');
+            if (firstFocusable) {
+                setTimeout(() => {
+                    firstFocusable.focus();
+                }, 50);
+            }
+            
+            // Configura il focus trap
+            setupFocusTrap(modal);
+        }
+        
+        // Funzione per chiudere i modal
+        function closeModal(modalId, restoreFocus = false) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            
+            modal.style.display = 'none';
+            
+            // Rimuovi gli event listener del focus trap
+            if (modal.trapKeydownHandler) {
+                document.removeEventListener('keydown', modal.trapKeydownHandler);
+                modal.trapKeydownHandler = null;
+            }
+            
+            // Aggiorna aria-expanded per il modal con aria-haspopup
+            if (modalId === 'ariaModal') {
+                document.getElementById('ariaModalBtn').setAttribute('aria-expanded', 'false');
+            }
+            
+            // Ripristina il focus all'elemento che lo aveva prima dell'apertura
+            if (restoreFocus && modal.previouslyFocused) {
+                setTimeout(() => {
+                    modal.previouslyFocused.focus();
+                }, 50);
+            }
+        }
+        
+        // Funzione per configurare il focus trap
+        function setupFocusTrap(modal) {
+            // Trova tutti gli elementi focusabili all'interno del modal
+            const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            
+            if (focusableElements.length === 0) return;
+            
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            // Funzione per gestire il keydown e intrappolare il focus
+            function trapKeydown(e) {
+                // Se viene premuto Tab
+                if (e.key === 'Tab' || e.keyCode === 9) {
+                    // Se si preme Shift+Tab e si è sul primo elemento, vai all'ultimo
+                    if (e.shiftKey && document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    } 
+                    // Se si preme Tab e si è sull'ultimo elemento, torna al primo
+                    else if (!e.shiftKey && document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+                
+                // Chiudi il modal con Escape
+                if (e.key === 'Escape' || e.keyCode === 27) {
+                    if (modal.id === 'brokenModal') {
+                        closeModal('brokenModal');
+                    } else if (modal.id === 'goodModal') {
+                        closeModal('goodModal', true);
+                    } else if (modal.id === 'ariaModal') {
+                        closeModal('ariaModal', true);
+                    }
+                }
+            }
+            
+            // Rimuovi eventuali handler esistenti
+            if (modal.trapKeydownHandler) {
+                document.removeEventListener('keydown', modal.trapKeydownHandler);
+            }
+            
+            // Aggiungi il nuovo handler
+            document.addEventListener('keydown', trapKeydown);
+            
+            // Salva il riferimento all'handler per poterlo rimuovere in seguito
+            modal.trapKeydownHandler = trapKeydown;
+        }
+        
+        // Chiudi i modal quando si fa clic all'esterno del contenuto
+        window.addEventListener('click', function(event) {
+            if (event.target.id === 'brokenModal') {
+                closeModal('brokenModal');
+            }
+            if (event.target.id === 'goodModal') {
+                closeModal('goodModal', true);
+            }
+            if (event.target.id === 'ariaModal') {
+                closeModal('ariaModal', true);
+            }
+        });
+        
+        
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu dropdown accessibile e non accessibile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        /* Stili comuni per i menu dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        .dropdown-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .dropdown-button:hover,
+        .dropdown-button:focus {
+            background-color: #45a049;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover,
+        .dropdown-content a:focus {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h2>Esempio 1: Menu dropdown non accessibile</h2>
+
+
+        <div class="dropdown" id="inaccessibleDropdown">
+            <button class="dropdown-button" onclick="toggleInaccessibleDropdown()" id="inaccessibleDropdownBtn">
+                Categorie prodotti
+            </button>
+            <div class="dropdown-content" id="inaccessibleDropdownContent">
+                <a href="#">Elettronica</a>
+                <a href="#">Abbigliamento</a>
+                <a href="#">Casa e giardino</a>
+                <a href="#">Sport e tempo libero</a>
+            </div>
+        </div>
+
+        <h2>Esempio 2: Menu dropdown accessibile con aria-expanded</h2>
+
+        <div class="dropdown" id="accessibleDropdown">
+            <button class="dropdown-button" onclick="toggleAccessibleDropdown()" aria-haspopup="true"
+                aria-expanded="false" id="accessibleDropdownBtn">
+                Categorie prodotti
+            </button>
+            <div class="dropdown-content" id="accessibleDropdownContent">
+                <a href="#">Elettronica</a>
+                <a href="#">Abbigliamento</a>
+                <a href="#">Casa e giardino</a>
+                <a href="#">Sport e tempo libero</a>
+            </div>
+        </div>
+
+        <script>
+            // Funzione per il dropdown accessibile
+            function toggleAccessibleDropdown() {
+                const dropdownContent = document.getElementById("accessibleDropdownContent");
+                const dropdownBtn = document.getElementById("accessibleDropdownBtn");
+
+                // Aggiorna lo stato aria-expanded
+                const isExpanded = dropdownBtn.getAttribute("aria-expanded") === "true";
+                dropdownBtn.setAttribute("aria-expanded", !isExpanded);
+
+                // Aggiorna la visualizzazione
+                dropdownContent.classList.toggle("show");
+
+                // Se il menu è aperto, imposta il focus sul primo elemento
+                if (!isExpanded) {
+                    setTimeout(() => {
+                        const firstItem = dropdownContent.querySelector("a");
+                        if (firstItem) {
+                            firstItem.focus();
+                        }
+                    }, 100);
+                }
+            }
+
+            // Funzione per il dropdown non accessibile
+            function toggleInaccessibleDropdown() {
+                const dropdownContent = document.getElementById("inaccessibleDropdownContent");
+                // Semplicemente mostra/nasconde senza aggiornare gli attributi di accessibilità
+                dropdownContent.classList.toggle("show");
+            }
+
+            // Gestione chiusura dei dropdown quando si fa clic all'esterno
+            window.addEventListener("click", function (event) {
+                // Per il dropdown accessibile
+                const accessibleDropdown = document.getElementById("accessibleDropdown");
+                const accessibleBtn = document.getElementById("accessibleDropdownBtn");
+                if (!event.target.matches("#accessibleDropdownBtn") && !accessibleDropdown.contains(event.target)) {
+                    const dropdownContent = document.getElementById("accessibleDropdownContent");
+                    if (dropdownContent.classList.contains("show")) {
+                        dropdownContent.classList.remove("show");
+                        accessibleBtn.setAttribute("aria-expanded", "false");
+                    }
+                }
+
+                // Per il dropdown non accessibile
+                const inaccessibleDropdown = document.getElementById("inaccessibleDropdown");
+                if (!event.target.matches("#inaccessibleDropdownBtn") && !inaccessibleDropdown.contains(event.target)) {
+                    const dropdownContent = document.getElementById("inaccessibleDropdownContent");
+                    if (dropdownContent.classList.contains("show")) {
+                        dropdownContent.classList.remove("show");
+                    }
+                }
+            });
+
+            // Gestione tasti per il dropdown accessibile
+            document.addEventListener("keydown", function (event) {
+                const dropdownContent = document.getElementById("accessibleDropdownContent");
+                const dropdownBtn = document.getElementById("accessibleDropdownBtn");
+
+                // Chiudi il dropdown quando si preme Escape
+                if (event.key === "Escape" && dropdownContent.classList.contains("show")) {
+                    dropdownContent.classList.remove("show");
+                    dropdownBtn.setAttribute("aria-expanded", "false");
+                    dropdownBtn.focus();
+                }
+            });
+
+        </script>
+</body>
+
+</html>
